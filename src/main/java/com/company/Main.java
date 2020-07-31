@@ -1,6 +1,7 @@
 package com.company;
 
-import javax.xml.namespace.QName;
+import au.com.bytecode.opencsv.CSVWriter;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -48,6 +49,19 @@ public class Main {
                 workPerDate.put(dates.get(i), time.get(i));
                 mainMap.put(userData.get(i), workPerDate);
             }
+        }
+        try{
+            FileOutputStream fileOutputStream = new FileOutputStream("final.csv");
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            CSVWriter writer = new CSVWriter(outputStreamWriter);
+            Set<String> uniqueDateSet = new HashSet<String>(dates);
+            String datesLine[] = new String[uniqueDateSet.size()];
+            uniqueDateSet.toArray(datesLine);
+            Arrays.sort(datesLine);
+            datesLine[0] = "Name / Date";
+            System.out.println(Arrays.toString(datesLine));
+        }catch (IOException e){
+            e.printStackTrace();
         }
     }
 }
