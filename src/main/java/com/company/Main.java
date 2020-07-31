@@ -5,6 +5,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -19,7 +20,6 @@ public class Main {
             bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
             while ((line = bufferedReader.readLine()) != null) {
                 String[] data = line.split(",");
-                System.out.println(data[0] + " " + data[1] + " " + data[2]);
                 userData.add(data[0]);
                 dates.add(data[1]);
                 time.add(data[2]);
@@ -54,12 +54,32 @@ public class Main {
             FileOutputStream fileOutputStream = new FileOutputStream("final.csv");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
             CSVWriter writer = new CSVWriter(outputStreamWriter);
+            for(String date : dates){
+                if(date.equals("Date")){
+                    dates.set(dates.indexOf(date),"1");
+                }
+            }
             Set<String> uniqueDateSet = new HashSet<String>(dates);
+            System.out.println(uniqueDateSet.toString());
             String datesLine[] = new String[uniqueDateSet.size()];
             uniqueDateSet.toArray(datesLine);
             Arrays.sort(datesLine);
             datesLine[0] = "Name / Date";
             System.out.println(Arrays.toString(datesLine));
+            writer.writeNext(datesLine);
+            for (int i = 1; i < userData.size(); i++) {
+                List<String> raw = new ArrayList<String>();
+                String s = userData.get(i);
+                raw.add(s);
+                for (int j = 1; j < datesLine.length; j++) {
+                    String dateResult = mainMap.get(s).get(datesLine[j]);
+                    if (dateResult == null)
+                        raw.add("0");
+                    else raw.add(dateResult);
+                }
+                String temp = raw.stream().map(n-> String.valueOf(n)).collect(Collectors.joining(","));
+                writer.writeNext(temp.split(","));
+            }
         }catch (IOException e){
             e.printStackTrace();
         }
