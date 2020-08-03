@@ -5,7 +5,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
 
@@ -59,16 +58,15 @@ public class Main {
                     dates.set(dates.indexOf(date),"1");
                 }
             }
+            List<String> raw = new ArrayList<String>();
             Set<String> uniqueDateSet = new HashSet<String>(dates);
-            System.out.println(uniqueDateSet.toString());
             String datesLine[] = new String[uniqueDateSet.size()];
             uniqueDateSet.toArray(datesLine);
             Arrays.sort(datesLine);
             datesLine[0] = "Name / Date";
-            System.out.println(Arrays.toString(datesLine));
             writer.writeNext(datesLine);
+            String[] users = new String[userData.size()];
             for (int i = 1; i < userData.size(); i++) {
-                List<String> raw = new ArrayList<String>();
                 String s = userData.get(i);
                 raw.add(s);
                 for (int j = 1; j < datesLine.length; j++) {
@@ -77,8 +75,10 @@ public class Main {
                         raw.add("0");
                     else raw.add(dateResult);
                 }
-                String temp = raw.stream().map(n-> String.valueOf(n)).collect(Collectors.joining(","));
-                writer.writeNext(temp.split(","));
+            }
+
+            for(String user : users){
+                System.out.println(user);
             }
         }catch (IOException e){
             e.printStackTrace();
